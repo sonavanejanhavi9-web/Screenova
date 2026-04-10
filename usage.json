@@ -1,0 +1,120 @@
+{
+    "testuser": {
+        "2026-03-26": {
+            "instagram": 0,
+            "youtube": 0,
+            "whatsapp": 0,
+            "other": 0,
+            "other_name": "Other Apps",
+            "total": 0
+        },
+        "2026-04-05": {
+            "instagram": 50,
+            "youtube": 10,
+            "whatsapp": 20,
+            "other": 0,
+            "other_name": "Other Apps",
+            "total": 80
+        },
+        "2026-03-27": {
+            "instagram": 95,
+            "youtube": 70,
+            "whatsapp": 45,
+            "other": 30,
+            "other_name": "Other Apps",
+            "total": 240
+        },
+        "2026-03-28": {
+            "instagram": 110,
+            "youtube": 80,
+            "whatsapp": 50,
+            "other": 35,
+            "other_name": "Other Apps",
+            "total": 275
+        },
+        "2026-03-29": {
+            "instagram": 120,
+            "youtube": 95,
+            "whatsapp": 55,
+            "other": 40,
+            "other_name": "Other Apps",
+            "total": 310
+        },
+        "2026-03-30": {
+            "instagram": 135,
+            "youtube": 100,
+            "whatsapp": 60,
+            "other": 45,
+            "other_name": "Other Apps",
+            "total": 340
+        },
+        "2026-03-31": {
+            "instagram": 145,
+            "youtube": 110,
+            "whatsapp": 65,
+            "other": 50,
+            "other_name": "Other Apps",
+            "total": 370
+        },
+        "2026-04-01": {
+            "instagram": 130,
+            "youtube": 90,
+            "whatsapp": 55,
+            "other": 35,
+            "other_name": "Other Apps",
+            "total": 310
+        },
+        "2026-04-02": {
+            "instagram": 100,
+            "youtube": 75,
+            "whatsapp": 50,
+            "other": 30,
+            "other_name": "Other Apps",
+            "total": 255
+        },
+        "2026-04-03": {
+            "instagram": 90,
+            "youtube": 65,
+            "whatsapp": 45,
+            "other": 25,
+            "other_name": "Other Apps",
+            "total": 225
+        },
+        "2026-04-04": {
+            "instagram": 80,
+            "youtube": 55,
+            "whatsapp": 40,
+            "other": 20,
+            "other_name": "Other Apps",
+            "total": 195
+        }
+    },
+    "hanshika": {
+        "2026-04-06": {
+            "instagram": 39,
+            "youtube": 14,
+            "whatsapp": 10,
+            "other": 20,
+            "other_name": "Other Apps",
+            "total": 83
+        }
+    },
+    "student": {
+        "2026-04-06": {
+            "instagram": 15,
+            "youtube": 50,
+            "whatsapp": 70,
+            "other": 200,
+            "other_name": "Other Apps",
+            "total": 335
+        },
+        "2026-04-05": {
+            "instagram": 40,
+            "youtube": 30,
+            "whatsapp": 34,
+            "other": 0,
+            "other_name": "Other Apps",
+            "total": 104
+        }
+    }
+}

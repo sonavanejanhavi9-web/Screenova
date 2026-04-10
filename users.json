@@ -1,0 +1,18 @@
+{
+    "testuser": {
+        "password": "1234",
+        "created": "2026-03-30"
+    },
+    "jainhanshika05": {
+        "password": "fdhjfkhlkj",
+        "created": "2026-04-06"
+    },
+    "hanshika": {
+        "password": "1000",
+        "created": "2026-04-06"
+    },
+    "student": {
+        "password": "1234",
+        "created": "2026-04-06"
+    }
+}

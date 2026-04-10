@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Analytics – Screenova</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="nav-logo">Screenova</span>
+  <div class="nav-links">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('usage') }}">Log Usage</a>
+    <a href="{{ url_for('analytics') }}" class="active">Analytics</a>
+    <a href="{{ url_for('detox') }}">Detox</a>
+    <a href="{{ url_for('chatbot') }}">Chat</a>
+    <a href="{{ url_for('logout') }}" class="btn-nav">Logout</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">📊 Weekly Analytics</h1>
+    <p class="page-sub">Your screen time trends over the past 7 days.</p>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="analytics-stats">
+    <div class="card card-accent-purple" style="text-align:center;">
+      <div class="stat-label">7-Day Average</div>
+      <div class="stat-value" data-countup="{{ avg }}">{{ avg }}</div>
+      <div class="stat-sub">min / day</div>
+    </div>
+    <div class="card card-accent-yellow" style="text-align:center;">
+      <div class="stat-label">Most Used App</div>
+      <div class="stat-value" style="font-size:1.5rem;">
+        {% if most_used=='Instagram' %}📸
+        {% elif most_used=='YouTube' %}▶️
+        {% elif most_used=='WhatsApp' %}💬
+        {% else %}📱{% endif %}
+        {{ most_used }}
+      </div>
+      <div class="stat-sub">this week</div>
+    </div>
+    <div class="card" style="text-align:center;border-left:3px solid {{ trend_color }};">
+      <div class="stat-label">Usage Trend</div>
+      <div class="stat-value" style="font-size:1.4rem;color:{{ trend_color }};">{{ trend }}</div>
+      <div class="stat-sub">vs earlier this week</div>
+    </div>
+  </div>
+
+  <!-- Line chart -->
+  <div class="card" style="margin-bottom:28px;">
+    <div class="stat-label" style="margin-bottom:16px;">Daily Usage (minutes)</div>
+    <div class="chart-container"><canvas id="lineChart"></canvas></div>
+  </div>
+
+  <!-- App bars + donut -->
+  <div class="card-grid-2">
+    <div class="card">
+      <div class="stat-label" style="margin-bottom:20px;">App Totals (7-day)</div>
+      {% set max_app = [app_totals['Instagram'],app_totals['YouTube'],app_totals['WhatsApp'],app_totals['Other'],1]|max %}
+      {% for icon,key,grad in [
+          ('📸','Instagram','linear-gradient(90deg,#c471ed,#f64f59)'),
+          ('▶️','YouTube',  'linear-gradient(90deg,#ff512f,#dd2476)'),
+          ('💬','WhatsApp', 'linear-gradient(90deg,#11998e,#38ef7d)'),
+          ('📱','Other',    'linear-gradient(90deg,#7c5cfc,#12c2e9)')] %}
+      <div class="app-bar-row">
+        <span class="app-icon">{{ icon }}</span>
+        <div class="app-bar-bg">
+          <div class="app-bar-fill" style="background:{{ grad }};"
+               data-width="{{ (app_totals[key]/max_app*100)|int }}"></div>
+        </div>
+        <span class="app-bar-mins">{{ app_totals[key] }}m</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div class="stat-label" style="margin-bottom:16px;">App Distribution</div>
+      <div style="max-width:220px;width:100%;"><canvas id="donutChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Screenova Project | All Rights Reserved</footer>
+
+<script src="{{ url_for('static',filename='script.js') }}"></script>
+<script>
+Chart.defaults.color = '#7a7a9a';
+Chart.defaults.font.family = "'DM Sans',sans-serif";
+
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: {{ labels|safe }},
+    datasets: [{
+      label: 'Minutes', data: {{ daily_totals|safe }},
+      borderColor: '#7c5cfc', backgroundColor: 'rgba(124,92,252,.12)',
+      borderWidth: 2.5, pointBackgroundColor: '#c471ed',
+      pointRadius: 5, pointHoverRadius: 7, tension: .4, fill: true
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,.05)' }, border: { color: 'transparent' } },
+      y: { grid: { color: 'rgba(255,255,255,.05)' }, border: { color: 'transparent' }, beginAtZero: true }
+    }
+  }
+});
+
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Instagram','YouTube','WhatsApp','Other'],
+    datasets: [{
+      data: [{{ app_totals['Instagram'] }},{{ app_totals['YouTube'] }},
+             {{ app_totals['WhatsApp'] }},{{ app_totals['Other'] }}],
+      backgroundColor: ['#c471ed','#ff512f','#38ef7d','#7c5cfc'],
+      borderColor: '#10101e', borderWidth: 3, hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { padding: 16, boxWidth: 12 } } },
+    cutout: '65%'
+  }
+});
+</script>
+</body>
+</html>

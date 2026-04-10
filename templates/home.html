@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Screenova – Digital Wellness</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+  /* ── HOME-ONLY STYLES ───────────────────────────────── */
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:#080810; color:#e8e8f0; font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#7c5cfc44;border-radius:50px}
+
+  /* ── NAVBAR ──────────────────────────────────────────── */
+  .nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 48px;
+    background:rgba(8,8,16,0.7);
+    backdrop-filter:blur(24px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .nav-logo {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem;
+    background:linear-gradient(135deg,#a78bfa,#38bdf8);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    letter-spacing:-0.5px;
+  }
+  .nav-links { display:flex; gap:6px; align-items:center; }
+  .nav-links a {
+    padding:8px 18px; border-radius:50px; font-size:0.86rem; color:rgba(255,255,255,0.55);
+    font-weight:500; transition:all 0.2s; text-decoration:none;
+  }
+  .nav-links a:hover { color:#fff; background:rgba(255,255,255,0.07); }
+  .nav-links .nav-cta {
+    background:linear-gradient(135deg,#7c5cfc,#a78bfa);
+    color:#fff !important; padding:9px 22px; font-weight:600;
+    box-shadow:0 4px 20px rgba(124,92,252,0.35);
+  }
+  .nav-links .nav-cta:hover { opacity:0.88; transform:translateY(-1px); background:rgba(255,255,255,0.07) !important; }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .hero {
+    min-height:100vh; display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center; gap:60px;
+    padding:140px 80px 80px;
+    position:relative; overflow:hidden;
+  }
+  /* background mesh */
+  .hero::before {
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 700px 600px at -10% 50%, rgba(124,92,252,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 500px at 110% 20%, rgba(18,194,233,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 400px 400px at 60% 100%, rgba(196,113,237,0.1) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .hero-left { position:relative; z-index:1; }
+  .hero-eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(124,92,252,0.12); border:1px solid rgba(124,92,252,0.3);
+    border-radius:50px; padding:6px 16px; font-size:0.76rem;
+    font-weight:600; color:#a78bfa; letter-spacing:1.5px; text-transform:uppercase;
+    margin-bottom:28px;
+  }
+  .hero-eyebrow::before { content:''; width:6px; height:6px; border-radius:50%; background:#a78bfa; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
+
+  .hero-h1 {
+    font-family:'Syne',sans-serif; font-size:clamp(3rem,5.5vw,5.5rem);
+    font-weight:800; line-height:0.92; letter-spacing:-3px;
+    margin-bottom:24px;
+  }
+  .hero-h1 .word-screen { color:#fff; }
+  .hero-h1 .word-nova {
+    background:linear-gradient(135deg,#7c5cfc 0%,#c471ed 50%,#12c2e9 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hero-sub {
+    font-size:1.1rem; color:rgba(232,232,240,0.55); max-width:460px;
+    line-height:1.75; margin-bottom:16px;
+  }
+  .hero-quote {
+    font-size:0.9rem; color:#a78bfa; font-style:italic;
+    border-left:2px solid #7c5cfc; padding-left:14px; margin-bottom:44px;
+    max-width:380px;
+  }
+  .hero-btns { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:56px; }
+  .btn-hero-primary {
+    display:inline-flex; align-items:center; gap:9px;
+    background:linear-gradient(135deg,#7c5cfc,#c471ed);
+    color:#fff; padding:15px 34px; border-radius:50px;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem;
+    text-decoration:none;
+    box-shadow:0 6px 30px rgba(124,92,252,0.45);
+    transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-hero-primary:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 10px 40px rgba(124,92,252,0.6); }
+  .btn-hero-outline {
+    display:inline-flex; align-items:center; gap:9px;
+    border:1.5px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.8);
+    padding:14px 30px; border-radius:50px;
+    font-family:'Syne',sans-serif; font-weight:600; font-size:0.95rem;
+    text-decoration:none; transition:all 0.25s;
+  }
+  .btn-hero-outline:hover { border-color:#7c5cfc; color:#a78bfa; background:rgba(124,92,252,0.08); transform:translateY(-2px); }
+
+  .hero-social-proof { display:flex; align-items:center; gap:14px; }
+  .avatar-stack { display:flex; }
+  .avatar-stack span {
+    width:32px; height:32px; border-radius:50%; display:inline-flex;
+    align-items:center; justify-content:center; font-size:0.7rem; font-weight:700;
+    border:2px solid #080810; margin-left:-8px; color:#fff;
+  }
+  .avatar-stack span:first-child { margin-left:0; }
+  .sp-text { font-size:0.82rem; color:rgba(255,255,255,0.45); }
+  .sp-text strong { color:#a78bfa; }
+
+  /* HERO RIGHT — dashboard mockup illustration */
+  .hero-right { position:relative; z-index:1; }
+  .hero-mockup {
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:24px; padding:24px;
+    box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    position:relative; overflow:hidden;
+    animation:mockupFloat 6s ease-in-out infinite;
+  }
+  @keyframes mockupFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  .mockup-bar {
+    display:flex; align-items:center; gap:8px; margin-bottom:20px;
+  }
+  .mockup-dot { width:10px; height:10px; border-radius:50%; }
+  .mockup-bar-title { font-size:0.8rem; color:rgba(255,255,255,0.3); margin-left:8px; font-family:'Syne',sans-serif; }
+  .mock-stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  .mock-stat {
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+    border-radius:12px; padding:14px 12px; text-align:center;
+  }
+  .mock-stat .ms-val { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; }
+  .mock-stat .ms-lbl { font-size:0.68rem; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+  .mock-bar-section { margin-bottom:14px; }
+  .mock-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .mock-bar-icon { font-size:1rem; width:22px; text-align:center; }
+  .mock-bar-track { flex:1; background:rgba(255,255,255,0.07); border-radius:50px; height:7px; overflow:hidden; }
+  .mock-bar-fill { height:100%; border-radius:50px; }
+  .mock-bar-num { font-size:0.72rem; color:rgba(255,255,255,0.35); width:40px; text-align:right; }
+  .mock-score-ring {
+    width:56px; height:56px; border-radius:50%;
+    background:conic-gradient(#00e5a0 0deg 270deg, rgba(255,255,255,0.08) 270deg 360deg);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Syne',sans-serif; font-size:0.9rem; font-weight:800; color:#00e5a0;
+    margin:0 auto 6px;
+    box-shadow:0 0 20px rgba(0,229,160,0.25);
+  }
+  /* floating badges */
+  .float-badge {
+    position:absolute; background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.12);
+    border-radius:12px; padding:10px 14px;
+    font-size:0.78rem; font-weight:600; white-space:nowrap;
+    animation:badgeFloat 4s ease-in-out infinite;
+  }
+  .float-badge.b1 { top:-20px; right:-20px; color:#00e5a0; animation-delay:0s; }
+  .float-badge.b2 { bottom:30px; left:-30px; color:#f9c846; animation-delay:-2s; }
+  @keyframes badgeFloat { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-8px) rotate(2deg)} }
+
+  /* ── TICKER ──────────────────────────────────────────── */
+  .ticker-wrap {
+    overflow:hidden; background:rgba(124,92,252,0.08);
+    border-top:1px solid rgba(124,92,252,0.15);
+    border-bottom:1px solid rgba(124,92,252,0.15);
+    padding:14px 0;
+  }
+  .ticker-inner {
+    display:flex; gap:0; white-space:nowrap;
+    animation:ticker 28s linear infinite;
+  }
+  .ticker-inner:hover { animation-play-state:paused; }
+  .ticker-item {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:0 48px; font-size:0.82rem; color:rgba(255,255,255,0.45);
+    font-weight:500;
+  }
+  .ticker-item span { color:#a78bfa; font-weight:700; }
+  .ticker-dot { width:4px; height:4px; border-radius:50%; background:#7c5cfc; flex-shrink:0; }
+  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* ── STATS BAND ──────────────────────────────────────── */
+  .stats-band {
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:1px; background:rgba(255,255,255,0.05);
+    border-top:1px solid rgba(255,255,255,0.06);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .sband-item {
+    background:#080810; padding:40px 32px; text-align:center;
+    transition:background 0.25s;
+  }
+  .sband-item:hover { background:rgba(124,92,252,0.06); }
+  .sband-num {
+    font-family:'Syne',sans-serif; font-size:2.8rem; font-weight:800;
+    background:linear-gradient(135deg,#7c5cfc,#12c2e9);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    line-height:1;
+  }
+  .sband-lbl { font-size:0.83rem; color:rgba(255,255,255,0.4); margin-top:8px; }
+
+  /* ── SECTION COMMONS ─────────────────────────────────── */
+  section { padding:100px 80px; position:relative; }
+  .section-tag {
+    display:inline-block; font-size:0.72rem; font-weight:700;
+    letter-spacing:2.5px; text-transform:uppercase; color:#7c5cfc;
+    margin-bottom:14px;
+  }
+  .section-h2 {
+    font-family:'Syne',sans-serif; font-size:clamp(2rem,4vw,3.2rem);
+    font-weight:800; letter-spacing:-1.5px; line-height:1.05;
+    margin-bottom:18px;
+  }
+  .section-sub { font-size:1rem; color:rgba(255,255,255,0.45); max-width:520px; line-height:1.75; }
+
+  /* ── HOW IT WORKS ────────────────────────────────────── */
+  #how { background:#080810; }
+  .how-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:64px; }
+  .how-card {
+    position:relative; background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.07); border-radius:20px;
+    padding:32px 24px; transition:all 0.3s;
+    overflow:hidden;
+  }
+  .how-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,#7c5cfc,transparent);
+    opacity:0; transition:opacity 0.3s;
+  }
+  .how-card:hover { transform:translateY(-6px); border-color:rgba(124,92,252,0.3); }
+  .how-card:hover::before { opacity:1; }
+  .how-num {
+    font-family:'Syne',sans-serif; font-size:3.5rem; font-weight:800;
+    color:rgba(124,92,252,0.12); line-height:1; margin-bottom:16px;
+  }
+  .how-icon { font-size:1.8rem; margin-bottom:14px; }
+  .how-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; margin-bottom:8px; }
+  .how-desc { font-size:0.85rem; color:rgba(255,255,255,0.45); line-height:1.7; }
+
+  /* ── FEATURES DEEP DIVE ──────────────────────────────── */
+  #features { background:linear-gradient(180deg,#0c0c1a 0%,#080810 100%); }
+  .features-bento {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:auto auto;
+    gap:20px; margin-top:64px;
+  }
+  .bento {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+    border-radius:24px; padding:32px; transition:all 0.3s; overflow:hidden; position:relative;
+  }
+  .bento:hover { border-color:rgba(124,92,252,0.3); transform:translateY(-4px); }
+  .bento.big { grid-column:span 2; }
+  .bento.tall { grid-row:span 2; }
+  .bento-icon {
+    width:52px; height:52px; border-radius:14px; display:flex;
+    align-items:center; justify-content:center; font-size:1.4rem;
+    margin-bottom:20px;
+  }
+  .bento-title { font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:700; margin-bottom:10px; }
+  .bento-desc { font-size:0.86rem; color:rgba(255,255,255,0.45); line-height:1.75; }
+  /* Inline mini-visuals inside bentos */
+  .bento-chart { margin-top:20px; }
+  .bento-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .bento-bar-name { font-size:0.78rem; color:rgba(255,255,255,0.4); width:70px; }
+  .bento-bar-track { flex:1; background:rgba(255,255,255,0.07); border-radius:50px; height:6px; }
+  .bento-bar-fill { height:100%; border-radius:50px; }
+  .bento-level-pills { display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+  .level-pill {
+    display:flex; align-items:center; gap:12px;
+    background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 14px;
+  }
+  .level-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .level-name { font-size:0.82rem; font-weight:600; }
+  .level-range { font-size:0.75rem; color:rgba(255,255,255,0.35); margin-left:auto; }
+
+  /* ── ABOUT ───────────────────────────────────────────── */
+  #about { background:#080810; }
+  .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; margin-top:64px; }
+  .about-illustration { position:relative; }
+  .about-card-stack { position:relative; height:380px; }
+  .acard {
+    position:absolute; background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:24px;
+  }
+  .acard.c1 { top:0; left:0; right:40px; box-shadow:0 20px 60px rgba(0,0,0,0.5); z-index:3; }
+  .acard.c2 { top:60px; left:20px; right:20px; z-index:2; opacity:0.7; }
+  .acard.c3 { top:120px; left:40px; right:0; z-index:1; opacity:0.4; }
+  .acard-title { font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700; margin-bottom:14px; color:rgba(255,255,255,0.7); }
+  .acard-metric { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .acard-metric-name { font-size:0.78rem; color:rgba(255,255,255,0.35); }
+  .acard-metric-val { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:#a78bfa; }
+
+  .mission-text h3 { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:700; margin-bottom:16px; }
+  .mission-text p { font-size:0.92rem; color:rgba(255,255,255,0.5); line-height:1.8; margin-bottom:20px; }
+  .mission-pillars { display:flex; flex-direction:column; gap:14px; margin-top:28px; }
+  .pillar {
+    display:flex; gap:16px; align-items:flex-start;
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+    border-radius:14px; padding:16px 18px; transition:border-color 0.2s;
+  }
+  .pillar:hover { border-color:rgba(124,92,252,0.3); }
+  .pillar-icon { font-size:1.3rem; flex-shrink:0; margin-top:2px; }
+  .pillar-title { font-size:0.88rem; font-weight:600; margin-bottom:4px; }
+  .pillar-desc { font-size:0.8rem; color:rgba(255,255,255,0.4); line-height:1.6; }
+
+
+  /* ── SUPPORT ─────────────────────────────────────────── */
+  #support { background:#080810; }
+  .support-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:64px; align-items:start; }
+  .faq-list { display:flex; flex-direction:column; gap:12px; }
+  .faq-item {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+    border-radius:14px; overflow:hidden;
+  }
+  .faq-q {
+    width:100%; background:none; border:none; color:#e8e8f0;
+    font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:500;
+    padding:18px 20px; text-align:left; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    transition:background 0.2s;
+  }
+  .faq-q:hover { background:rgba(124,92,252,0.06); }
+  .faq-arrow { font-size:0.75rem; color:#7c5cfc; transition:transform 0.25s; flex-shrink:0; }
+  .faq-a {
+    max-height:0; overflow:hidden; transition:max-height 0.3s ease, padding 0.3s;
+    font-size:0.85rem; color:rgba(255,255,255,0.45); line-height:1.75;
+    padding:0 20px;
+  }
+  .faq-item.open .faq-a { max-height:200px; padding:0 20px 18px; }
+  .faq-item.open .faq-arrow { transform:rotate(180deg); }
+
+  .contact-card {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+    border-radius:20px; padding:36px;
+  }
+  .contact-card h3 { font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:700; margin-bottom:8px; }
+  .contact-card p { font-size:0.86rem; color:rgba(255,255,255,0.45); margin-bottom:28px; line-height:1.7; }
+  .form-group { margin-bottom:16px; }
+  .form-label { display:block; font-size:0.75rem; font-weight:600; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:7px; }
+  .form-input {
+    width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px; padding:12px 14px; color:#e8e8f0;
+    font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; transition:border-color 0.2s;
+  }
+  .form-input:focus { border-color:#7c5cfc; background:rgba(124,92,252,0.05); }
+  .form-input::placeholder { color:rgba(255,255,255,0.2); }
+  textarea.form-input { resize:vertical; min-height:100px; }
+  .btn-submit {
+    width:100%; background:linear-gradient(135deg,#7c5cfc,#c471ed);
+    border:none; border-radius:10px; padding:14px; color:#fff;
+    font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700;
+    cursor:pointer; transition:all 0.25s; margin-top:4px;
+    box-shadow:0 4px 20px rgba(124,92,252,0.35);
+  }
+  .btn-submit:hover { opacity:0.88; transform:translateY(-2px); }
+  .support-channels { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px; }
+  .channel {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+    border-radius:12px; padding:16px; text-align:center; transition:all 0.25s;
+  }
+  .channel:hover { border-color:rgba(124,92,252,0.3); transform:translateY(-2px); }
+  .channel-icon { font-size:1.4rem; margin-bottom:6px; }
+  .channel-name { font-size:0.8rem; font-weight:600; margin-bottom:2px; }
+  .channel-info { font-size:0.73rem; color:rgba(255,255,255,0.3); }
+  .submit-toast {
+    display:none; background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.3);
+    border-radius:10px; padding:12px 16px; font-size:0.85rem; color:#00e5a0;
+    margin-top:12px; text-align:center;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  footer {
+    background:rgba(0,0,0,0.4); border-top:1px solid rgba(255,255,255,0.06);
+    padding:48px 80px 28px;
+  }
+  .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; margin-bottom:48px; }
+  .footer-brand .f-logo {
+    font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800;
+    background:linear-gradient(135deg,#a78bfa,#38bdf8);
+    -webkit-background-clip:text; -webkit-text-fill-fill:transparent; background-clip:text;
+    -webkit-text-fill-color:transparent; margin-bottom:12px;
+  }
+  .footer-brand p { font-size:0.84rem; color:rgba(255,255,255,0.35); line-height:1.7; max-width:260px; }
+  .footer-col h4 { font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700; margin-bottom:16px; color:rgba(255,255,255,0.7); }
+  .footer-col a { display:block; font-size:0.82rem; color:rgba(255,255,255,0.35); margin-bottom:9px; text-decoration:none; transition:color 0.2s; }
+  .footer-col a:hover { color:#a78bfa; }
+  .footer-bottom { display:flex; justify-content:space-between; align-items:center; padding-top:24px; border-top:1px solid rgba(255,255,255,0.05); }
+  .footer-bottom p { font-size:0.8rem; color:rgba(255,255,255,0.25); }
+  .footer-badges { display:flex; gap:10px; }
+  .fbadge {
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+    border-radius:50px; padding:5px 14px; font-size:0.72rem; color:rgba(255,255,255,0.35);
+  }
+
+  /* ── SCROLL REVEAL ───────────────────────────────────── */
+  .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media(max-width:1100px){
+    .hero{ grid-template-columns:1fr; padding:120px 40px 60px; text-align:center; }
+    .hero-sub,.hero-quote{ max-width:100%; }
+    .hero-btns,.hero-social-proof{ justify-content:center; }
+    .hero-right{ display:none; }
+    .how-grid{ grid-template-columns:repeat(2,1fr); }
+    .features-bento{ grid-template-columns:1fr 1fr; }
+    .bento.big{ grid-column:span 2; }
+    .about-grid{ grid-template-columns:1fr; gap:40px; }
+    .about-card-stack{ display:none; }
+    .support-grid{ grid-template-columns:1fr; }
+    .stats-band{ grid-template-columns:repeat(2,1fr); }
+    .footer-top{ grid-template-columns:1fr 1fr; gap:32px; }
+    section{ padding:72px 40px; }
+    footer{ padding:40px; }
+  }
+  @media(max-width:640px){
+    .nav{ padding:14px 20px; }
+    .how-grid,.features-bento{ grid-template-columns:1fr; }
+    .bento.big{ grid-column:span 1; }
+    .stats-band{ grid-template-columns:repeat(2,1fr); }
+    .footer-top{ grid-template-columns:1fr; }
+    section{ padding:56px 20px; }
+    footer{ padding:32px 20px; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ NAVBAR ════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-logo">Screenova</div>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#features">Features</a>
+    <a href="#about">About</a>
+    <a href="#support">Support</a>
+
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}" class="nav-cta">Get Started →</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════ HERO ════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Digital Wellness Platform 2026</div>
+    <h1 class="hero-h1">
+      <span class="word-screen">Screen</span><br>
+      <span class="word-nova">nova</span>
+    </h1>
+    <p class="hero-sub">Track your social media habits, understand your addiction level, and build healthier digital routines — all in one place.</p>
+    <p class="hero-quote">"Take control of your screen time before it takes control of you."</p>
+    <div class="hero-btns">
+      <a href="{{ url_for('register') }}" class="btn-hero-primary">🚀 Start For Free</a>
+      <a href="#how" class="btn-hero-outline">See How It Works</a>
+    </div>
+    <div class="hero-social-proof">
+      <div class="avatar-stack">
+        <span style="background:linear-gradient(135deg,#7c5cfc,#c471ed);">S</span>
+        <span style="background:linear-gradient(135deg,#12c2e9,#7c5cfc);">N</span>
+        <span style="background:linear-gradient(135deg,#f9c846,#ff6b35);">S</span>
+        <span style="background:linear-gradient(135deg,#00e5a0,#12c2e9);">J</span>
+      </div>
+      <p class="sp-text">Built by <strong>4 engineers</strong> who cared about digital health</p>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <!-- Floating badges -->
+    <div class="float-badge b1">✅ Within daily limit!</div>
+    <div class="float-badge b2">🔥 High usage detected</div>
+
+    <!-- Dashboard mockup -->
+    <div class="hero-mockup">
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#ff5370;"></div>
+        <div class="mockup-dot" style="background:#f9c846;"></div>
+        <div class="mockup-dot" style="background:#00e5a0;"></div>
+        <span class="mockup-bar-title">Dashboard · Today</span>
+      </div>
+
+      <div class="mock-stat-row">
+        <div class="mock-stat">
+          <div class="ms-val" style="color:#a78bfa;">247</div>
+          <div class="ms-lbl">Minutes</div>
+        </div>
+        <div class="mock-stat">
+          <div class="ms-val" style="color:#f9c846;">High 🔥</div>
+          <div class="ms-lbl">Level</div>
+        </div>
+        <div class="mock-stat">
+          <div class="mock-score-ring">72</div>
+          <div class="ms-lbl">Score</div>
+        </div>
+      </div>
+
+      <div class="mock-bar-section">
+        <div class="mock-bar-row">
+          <span class="mock-bar-icon">📸</span>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:78%;background:linear-gradient(90deg,#c471ed,#f64f59);"></div></div>
+          <span class="mock-bar-num">90m</span>
+        </div>
+        <div class="mock-bar-row">
+          <span class="mock-bar-icon">▶️</span>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:65%;background:linear-gradient(90deg,#ff512f,#dd2476);"></div></div>
+          <span class="mock-bar-num">75m</span>
+        </div>
+        <div class="mock-bar-row">
+          <span class="mock-bar-icon">💬</span>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:45%;background:linear-gradient(90deg,#11998e,#38ef7d);"></div></div>
+          <span class="mock-bar-num">52m</span>
+        </div>
+        <div class="mock-bar-row">
+          <span class="mock-bar-icon">📱</span>
+          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:26%;background:linear-gradient(90deg,#7c5cfc,#12c2e9);"></div></div>
+          <span class="mock-bar-num">30m</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════ TICKER ════════════════════════════════ -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item"><span>Average person</span> spends 7 hrs/day on screens<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Social media</span> rewires dopamine pathways in 66 days<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Blue light</span> disrupts sleep by up to 2 hours<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Screenova</span> helps you take back control today<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Students</span> check phones 150+ times per day<div class="ticker-dot"></div></span>
+    <span class="ticker-item">📵 A digital detox can reduce anxiety by <span>40%</span><div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Average person</span> spends 7 hrs/day on screens<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Social media</span> rewires dopamine pathways in 66 days<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Blue light</span> disrupts sleep by up to 2 hours<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Screenova</span> helps you take back control today<div class="ticker-dot"></div></span>
+    <span class="ticker-item"><span>Students</span> check phones 150+ times per day<div class="ticker-dot"></div></span>
+    <span class="ticker-item">📵 A digital detox can reduce anxiety by <span>40%</span><div class="ticker-dot"></div></span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ STATS BAND ════════════════════════════════ -->
+<div class="stats-band reveal">
+  <div class="sband-item">
+    <div class="sband-num">7hrs</div>
+    <div class="sband-lbl">Average daily screen time globally</div>
+  </div>
+  <div class="sband-item">
+    <div class="sband-num">4</div>
+    <div class="sband-lbl">Apps tracked in detail</div>
+  </div>
+  <div class="sband-item">
+    <div class="sband-num">100%</div>
+    <div class="sband-lbl">Data stored locally, fully private</div>
+  </div>
+  <div class="sband-item">
+    <div class="sband-num">0₹</div>
+    <div class="sband-lbl">Completely free for students</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ HOW IT WORKS ════════════════════════════════ -->
+<section id="how">
+  <div class="section-tag">How It Works</div>
+  <h2 class="section-h2">Four steps to a<br>healthier digital life</h2>
+  <p class="section-sub">Screenova is designed to be simple, insightful, and actionable. No complex setups needed.</p>
+
+  <div class="how-grid">
+    <div class="how-card reveal">
+      <div class="how-num">01</div>
+      <div class="how-icon">👤</div>
+      <div class="how-title">Create Your Account</div>
+      <div class="how-desc">Register with a username and email, or sign in instantly with Google. Your data stays on your device.</div>
+    </div>
+    <div class="how-card reveal" style="transition-delay:.1s;">
+      <div class="how-num">02</div>
+      <div class="how-icon">📝</div>
+      <div class="how-title">Log Daily Usage</div>
+      <div class="how-desc">Enter how many minutes you spent on Instagram, YouTube, WhatsApp, and other apps each day.</div>
+    </div>
+    <div class="how-card reveal" style="transition-delay:.2s;">
+      <div class="how-num">03</div>
+      <div class="how-icon">🧠</div>
+      <div class="how-title">Get Your Analysis</div>
+      <div class="how-desc">Screenova calculates your addiction level, digital health score, and weekly usage trends instantly.</div>
+    </div>
+    <div class="how-card reveal" style="transition-delay:.3s;">
+      <div class="how-num">04</div>
+      <div class="how-icon">🌿</div>
+      <div class="how-title">Take Action</div>
+      <div class="how-desc">Set a detox limit, get email alerts, chat with the wellness assistant, and build better habits.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════ FEATURES BENTO ════════════════════════════════ -->
+<section id="features">
+  <div class="section-tag">Features</div>
+  <h2 class="section-h2">Everything you need to<br>reclaim your attention</h2>
+  <p class="section-sub">Built for second-year engineering students who want practical tools, not overwhelming complexity.</p>
+
+  <div class="features-bento">
+
+    <!-- Usage Tracking — BIG -->
+    <div class="bento big reveal">
+      <div class="bento-icon" style="background:rgba(124,92,252,0.15);">📊</div>
+      <div class="bento-title">Usage Tracking</div>
+      <div class="bento-desc">Log your daily screen time per app with a date picker. Screenova stores a complete history of your habits so you can see patterns over time.</div>
+      <div class="bento-chart">
+        <div class="bento-bar-row">
+          <span class="bento-bar-name">Instagram</span>
+          <div class="bento-bar-track"><div class="bento-bar-fill" style="width:82%;background:linear-gradient(90deg,#c471ed,#f64f59);"></div></div>
+        </div>
+        <div class="bento-bar-row">
+          <span class="bento-bar-name">YouTube</span>
+          <div class="bento-bar-track"><div class="bento-bar-fill" style="width:68%;background:linear-gradient(90deg,#ff512f,#dd2476);"></div></div>
+        </div>
+        <div class="bento-bar-row">
+          <span class="bento-bar-name">WhatsApp</span>
+          <div class="bento-bar-track"><div class="bento-bar-fill" style="width:44%;background:linear-gradient(90deg,#11998e,#38ef7d);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Addiction Level -->
+    <div class="bento reveal" style="transition-delay:.1s;">
+      <div class="bento-icon" style="background:rgba(249,200,70,0.12);">🧠</div>
+      <div class="bento-title">Addiction Level Detection</div>
+      <div class="bento-desc">Instantly know where you stand based on total daily screen time.</div>
+      <div class="bento-level-pills">
+        <div class="level-pill">
+          <div class="level-dot" style="background:#00e5a0;"></div>
+          <span class="level-name" style="color:#00e5a0;">Healthy</span>
+          <span class="level-range">&lt; 2 hours</span>
+        </div>
+        <div class="level-pill">
+          <div class="level-dot" style="background:#f9c846;"></div>
+          <span class="level-name" style="color:#f9c846;">Moderate</span>
+          <span class="level-range">2–4 hours</span>
+        </div>
+        <div class="level-pill">
+          <div class="level-dot" style="background:#ff6b35;"></div>
+          <span class="level-name" style="color:#ff6b35;">High</span>
+          <span class="level-range">4–6 hours</span>
+        </div>
+        <div class="level-pill">
+          <div class="level-dot" style="background:#ff5370;"></div>
+          <span class="level-name" style="color:#ff5370;">Severe</span>
+          <span class="level-range">&gt; 6 hours</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Digital Detox -->
+    <div class="bento reveal" style="transition-delay:.15s;">
+      <div class="bento-icon" style="background:rgba(0,229,160,0.12);">🌿</div>
+      <div class="bento-title">Digital Detox Mode</div>
+      <div class="bento-desc">Set a daily screen-time limit using a slider. Get instant alerts — in-app, browser push, and email — the moment you exceed it.</div>
+    </div>
+
+    <!-- Email Alerts -->
+    <div class="bento reveal" style="transition-delay:.2s;">
+      <div class="bento-icon" style="background:rgba(18,194,233,0.12);">✉️</div>
+      <div class="bento-title">Smart Email Alerts</div>
+      <div class="bento-desc">Receive beautifully formatted daily summaries, weekly analytics reports, and automatic addiction warnings straight to your inbox.</div>
+    </div>
+
+    <!-- Analytics — BIG -->
+    <div class="bento big reveal" style="transition-delay:.1s;">
+      <div class="bento-icon" style="background:rgba(196,113,237,0.12);">📈</div>
+      <div class="bento-title">Weekly Analytics</div>
+      <div class="bento-desc">Interactive charts show your 7-day usage trend, most-used app, and whether your habits are improving or worsening. Shareable weekly reports via email.</div>
+    </div>
+
+    <!-- Chat Assistant -->
+    <div class="bento reveal" style="transition-delay:.25s;">
+      <div class="bento-icon" style="background:rgba(124,92,252,0.15);">🤖</div>
+      <div class="bento-title">Wellness Chat Assistant</div>
+      <div class="bento-desc">A rule-based chatbot that reads your live usage data and gives personalised tips for stress, sleep, and reducing screen time.</div>
+    </div>
+
+    <!-- Google Login -->
+    <div class="bento reveal" style="transition-delay:.3s;">
+      <div class="bento-icon" style="background:rgba(249,200,70,0.1);">🔑</div>
+      <div class="bento-title">Google Login</div>
+      <div class="bento-desc">Sign in with your Google account in one click. No passwords to remember — secure OAuth 2.0 authentication built in.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════ ABOUT ════════════════════════════════ -->
+<section id="about">
+  <div class="section-tag">About</div>
+  <h2 class="section-h2">Why we built<br>Screenova</h2>
+
+  <div class="about-grid">
+    <!-- illustration -->
+    <div class="about-illustration reveal">
+      <div class="about-card-stack">
+        <div class="acard c1">
+          <div class="acard-title">📊 Weekly Report · User</div>
+          <div class="acard-metric"><span class="acard-metric-name">Instagram</span><span class="acard-metric-val">4.2 hrs</span></div>
+          <div class="acard-metric"><span class="acard-metric-name">YouTube</span><span class="acard-metric-val">3.1 hrs</span></div>
+          <div class="acard-metric"><span class="acard-metric-name">Health Score</span><span class="acard-metric-val" style="color:#00e5a0;">62/100</span></div>
+          <div style="margin-top:14px;height:6px;background:rgba(255,255,255,0.06);border-radius:50px;overflow:hidden;">
+            <div style="width:62%;height:100%;background:linear-gradient(90deg,#7c5cfc,#12c2e9);border-radius:50px;"></div>
+          </div>
+        </div>
+        <div class="acard c2">
+          <div style="font-size:.75rem;color:rgba(255,255,255,.3);">🌿 Detox Mode Active</div>
+        </div>
+        <div class="acard c3">
+          <div style="font-size:.75rem;color:rgba(255,255,255,.2);">🤖 Chat Assistant</div>
+        </div>
+      </div>
+
+      <!-- Problem stats below stack -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;">
+        <div style="background:rgba(255,83,112,0.08);border:1px solid rgba(255,83,112,0.2);border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#ff5370;">66%</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:4px;">of students feel phone-addicted</div>
+        </div>
+        <div style="background:rgba(249,200,70,0.08);border:1px solid rgba(249,200,70,0.2);border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#f9c846;">150×</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:4px;">average daily phone checks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- mission text -->
+    <div class="mission-text reveal" style="transition-delay:.15s;">
+      <h3>A Mini Project With a Real Purpose</h3>
+      <p>Screenova was created as a second-year engineering mini project by four students who noticed a simple truth: everyone around them was struggling with phone addiction, yet no simple, private tool existed to track it.</p>
+      <p>We built Screenova to be exactly that — a clean, honest mirror for your digital habits. No algorithms that manipulate you, no cloud servers storing your data, no subscription fees.</p>
+
+      <div class="mission-pillars">
+        <div class="pillar">
+          <span class="pillar-icon">🔒</span>
+          <div>
+            <div class="pillar-title">Privacy First</div>
+            <div class="pillar-desc">All data lives in JSON files on your own machine. Nothing is uploaded to any server.</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🎓</span>
+          <div>
+            <div class="pillar-title">Built for Students</div>
+            <div class="pillar-desc">Simple Flask backend, plain HTML/CSS/JS — every line of code is readable and learnable.</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">💚</span>
+          <div>
+            <div class="pillar-title">Genuinely Helpful</div>
+            <div class="pillar-desc">Not just a tracker — real detox tools, wellness tips, and email nudges that create lasting change.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════ SUPPORT ════════════════════════════════ -->
+<section id="support">
+  <div class="section-tag">Help & Support</div>
+  <h2 class="section-h2">We're here to help</h2>
+  <p class="section-sub">Have a question, found a bug, or want to suggest a feature? Reach out — we read every message.</p>
+
+  <div class="support-grid">
+
+    <!-- FAQ -->
+    <div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;color:rgba(255,255,255,.7);">Frequently Asked Questions</h3>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            How is my data stored? <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-a">All your data is stored in local JSON files (users.json, usage.json, detox_limits.json) on your own computer. Nothing is sent to any external server. Your privacy is 100% protected.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Why isn't the email alert working? <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-a">You need to generate a Gmail App Password (not your normal password). Go to myaccount.google.com/apppasswords with 2-Step Verification turned ON. Paste the 16-character code into app.py.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Google login shows an error — why? <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-a">Make sure you added exactly "http://127.0.0.1:5000/google/callback" as an Authorised Redirect URI in your Google Cloud Console project. Also add yourself as a Test User in the OAuth consent screen.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can I track more than 4 apps? <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-a">Yes! The "Other Apps" field on the usage page lets you name and track any additional app. You can customise the field name each time you log usage.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            How do I reset all my data? <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-a">Simply open the project folder and clear the contents of usage.json (replace with {}) to reset usage data. Do the same for detox_limits.json. Your account in users.json is unaffected.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Does this work on mobile? <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-a">Screenova is fully responsive and works on mobile browsers. To access it from your phone on the same network, run Flask with host='0.0.0.0' and use your computer's local IP address.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact form -->
+    <div>
+      <div style="margin-bottom:24px;">
+        <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:12px;color:rgba(255,255,255,.7);">Contact Channels</h3>
+        <div class="support-channels">
+          <div class="channel">
+            <div class="channel-icon">📧</div>
+            <div class="channel-name">Email</div>
+            <div class="channel-info">screenova@project.edu</div>
+          </div>
+          <div class="channel">
+            <div class="channel-icon">💬</div>
+            <div class="channel-name">Chat Bot</div>
+            <div class="channel-info">Available after login</div>
+          </div>
+          <div class="channel">
+            <div class="channel-icon">🐙</div>
+            <div class="channel-name">GitHub</div>
+            <div class="channel-info">Report issues there</div>
+          </div>
+          <div class="channel">
+            <div class="channel-icon">⚡</div>
+            <div class="channel-name">Response Time</div>
+            <div class="channel-info">Within 24 hours</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <h3>Send Us a Message</h3>
+        <p>Bug report, feature request, or just feedback — we appreciate every message from our users.</p>
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input class="form-input" type="text" id="c-name" placeholder="Enter your name"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="c-email" placeholder="your@email.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-input" id="c-cat" style="cursor:pointer;">
+            <option value="" disabled selected>Choose a category</option>
+            <option>🐛 Bug Report</option>
+            <option>✨ Feature Request</option>
+            <option>🔑 Login / Auth Issue</option>
+            <option>📧 Email Alert Issue</option>
+            <option>💬 General Feedback</option>
+            <option>🎓 Academic / Project Help</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" id="c-msg" placeholder="Describe your issue or suggestion in detail..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="submitContact()">Send Message ✉️</button>
+        <div class="submit-toast" id="submitToast">✅ Message received! We'll get back to you within 24 hours.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════ FOOTER ════════════════════════════════ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="f-logo">Screenova</div>
+      <p>A digital wellness platform built by engineering students to help everyone build healthier screen habits.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#how">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="{{ url_for('register') }}">Get Started</a>
+      <a href="{{ url_for('login') }}">Login</a>
+    </div>
+    <div class="footer-col">
+      <h4>Project</h4>
+      <a href="#about">About</a>
+      <a href="#support">Support</a>
+    </div>
+    <div class="footer-col">
+      <h4>Tech Stack</h4>
+      <a href="#">Python / Flask</a>
+      <a href="#">HTML · CSS · JS</a>
+      <a href="#">JSON Storage</a>
+      <a href="#">Chart.js</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Screenova Project · All Rights Reserved</p>
+    <div class="footer-badges">
+      <span class="fbadge">🔒 Privacy First</span>
+      <span class="fbadge">🎓 Student Project</span>
+      <span class="fbadge">🆓 Free Forever</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* FAQ toggle */
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+/* Contact form submit (demo — stores to sessionStorage) */
+function submitContact(){
+  const n=document.getElementById('c-name').value.trim();
+  const e=document.getElementById('c-email').value.trim();
+  const m=document.getElementById('c-msg').value.trim();
+  if(!n||!e||!m){
+    alert('Please fill in your name, email, and message.'); return;
+  }
+  // In a real project this would POST to a Flask route
+  document.getElementById('c-name').value='';
+  document.getElementById('c-email').value='';
+  document.getElementById('c-msg').value='';
+  document.getElementById('c-cat').selectedIndex=0;
+  const t=document.getElementById('submitToast');
+  t.style.display='block';
+  setTimeout(()=>{t.style.display='none';},5000);
+}
+
+/* Scroll reveal */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* Smooth scroll for anchor links */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+</script>
+</body>
+</html>

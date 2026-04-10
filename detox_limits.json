@@ -1,0 +1,11 @@
+{
+    "testuser": {
+        "limit": 4.5
+    },
+    "hanshika": {
+        "limit": 7.5
+    },
+    "student": {
+        "limit": 1.0
+    }
+}

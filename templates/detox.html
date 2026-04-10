@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Detox – Screenova</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <style>
+    .slider-wrap { padding: 16px 0; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.1);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 2px 10px rgba(124,92,252,0.5);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .hour-display {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin: 16px 0 4px;
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .tip-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.25s;
+    }
+    .tip-card:hover {
+      border-color: rgba(124,92,252,0.3);
+      transform: translateY(-3px);
+    }
+    .tip-card .tip-icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .tip-card .tip-text { font-size: 0.85rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="nav-logo">Screenova</span>
+  <div class="nav-links">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('usage') }}">Log Usage</a>
+    <a href="{{ url_for('analytics') }}">Analytics</a>
+    <a href="{{ url_for('detox') }}" class="active">Detox</a>
+    <a href="{{ url_for('chatbot') }}">Chat</a>
+    <a href="{{ url_for('logout') }}" class="btn-nav">Logout</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">🌿 Digital Detox Mode</h1>
+    <p class="page-sub">Set a daily screen-time limit and hold yourself accountable.</p>
+  </div>
+
+  {% if message %}
+  <div class="alert-success">✅ {{ message }}</div>
+  {% endif %}
+
+  <div class="card-grid-2">
+    <!-- Set limit card -->
+    <div class="card">
+      <div class="stat-label">Set Daily Limit</div>
+      <form method="POST" action="{{ url_for('detox') }}">
+        <div class="slider-wrap">
+          <div class="hour-display">
+            <span id="limitDisplay">{{ current_limit if current_limit else 2 }}</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">hours per day</p>
+          <input type="range" id="limitSlider" name="limit"
+                 min="0.5" max="10" step="0.5"
+                 value="{{ current_limit if current_limit else 2 }}"
+                 oninput="document.getElementById('limitDisplay').textContent = this.value" />
+          <div style="display:flex;justify-content:space-between;margin-top:6px;">
+            <span style="font-size:0.75rem;color:var(--text-muted);">0.5 hrs</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);">10 hrs</span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:16px;">
+          💾 Save Limit
+        </button>
+      </form>
+    </div>
+
+    <!-- Today's status -->
+    <div class="card">
+      {% if exceeded %}
+      <div class="detox-status">
+        <div class="big-icon">🚨</div>
+        <h2 style="color:var(--red);">Limit Exceeded!</h2>
+        <p>
+          You've used <strong>{{ hours_today }} hrs</strong> today,
+          which is above your <strong>{{ current_limit }} hr</strong> limit.
+          <br /><br />Put the phone down and take a mindful break. 🧘
+        </p>
+      </div>
+      {% elif current_limit %}
+      <div class="detox-status">
+        <div class="big-icon">✅</div>
+        <h2 style="color:var(--green);">You're On Track!</h2>
+        <p>
+          Today's usage: <strong>{{ hours_today }} hrs</strong> /
+          Limit: <strong>{{ current_limit }} hrs</strong>.
+          <br /><br />Keep going — you're doing amazing! 🌿
+        </p>
+      </div>
+      {% else %}
+      <div class="detox-status">
+        <div class="big-icon">💡</div>
+        <h2>No Limit Set</h2>
+        <p>Set a daily limit using the slider to activate Detox Mode!</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Detox tips -->
+  <div class="stat-label" style="margin-top:32px;margin-bottom:4px;">Detox Tips</div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">📵</div>
+      <strong>Phone-Free Hour</strong>
+      <p class="tip-text">Keep the first hour after waking up completely screen-free.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">😴</div>
+      <strong>Sleep Hygiene</strong>
+      <p class="tip-text">No screens 1 hour before bed. Blue light disrupts melatonin.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🍽️</div>
+      <strong>Mindful Meals</strong>
+      <p class="tip-text">Eat without screens. Practice mindful eating for better digestion.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🚶</div>
+      <strong>Walk Breaks</strong>
+      <p class="tip-text">Every 2 hours take a 10-minute screen-free walk.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📚</div>
+      <strong>Replace with Reading</strong>
+      <p class="tip-text">Swap 30 min of social media with a book or podcast.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🔕</div>
+      <strong>Notification Detox</strong>
+      <p class="tip-text">Disable non-essential notifications to reduce screen pull.</p>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<footer>© 2026 Screenova Project | All Rights Reserved</footer>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

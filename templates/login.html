@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Login – Screenova</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"/>
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">Screenova</div>
+    <p class="auth-subtitle">Welcome back 👋</p>
+
+    {% if error %}
+    <div class="alert-error">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" name="username"
+               placeholder="Your username" required autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" name="password"
+               placeholder="Your password" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">
+        🔐 Login
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      No account? <a href="{{ url_for('register') }}">Register here</a>
+    </p>
+  </div>
+</div>
+<script src="{{ url_for('static',filename='script.js') }}"></script>
+</body>
+</html>

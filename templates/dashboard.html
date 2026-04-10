@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dashboard – Screenova</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"/>
+  <style>
+    .detox-alert{background:rgba(255,83,112,.1);border:1px solid rgba(255,83,112,.3);border-radius:12px;padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;gap:14px;}
+    .detox-ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);border-radius:12px;padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;gap:14px;}
+    .toast{position:fixed;bottom:28px;right:28px;background:#1a1a2e;border:1px solid var(--accent);color:var(--text);padding:14px 22px;border-radius:12px;font-size:.88rem;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;}
+    .toast.show{opacity:1;transform:translateY(0);}
+    .btn-sm{padding:9px 18px;font-size:.82rem;border-radius:50px;}
+    .push-bar{background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.2);border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="nav-logo">Screenova</span>
+  <div class="nav-links">
+    <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
+    <a href="{{ url_for('usage') }}">Log Usage</a>
+    <a href="{{ url_for('analytics') }}">Analytics</a>
+    <a href="{{ url_for('detox') }}">Detox</a>
+    <a href="{{ url_for('chatbot') }}">Chat</a>
+    <a href="{{ url_for('logout') }}" class="btn-nav">Logout</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <p style="font-size:.9rem;color:var(--text-muted);">{{ today }}</p>
+    <h1 class="page-title">Hello, {{ user }} 👋</h1>
+    <p class="page-sub">Here's your digital wellness snapshot for today.</p>
+  </div>
+
+  <!-- Push notification bar -->
+  <div class="push-bar">
+    <span style="font-size:1.1rem;">🔔</span>
+    <span style="font-weight:600;">Push Notifications</span>
+    <span style="color:var(--text-muted);font-size:.85rem;flex:1;">
+      Get browser alerts when your addiction level is High or Severe.
+    </span>
+    <button class="btn btn-primary btn-sm" id="pushBtn" onclick="enablePush()">
+      Enable Push Alerts
+    </button>
+  </div>
+
+  <!-- Detox banners -->
+  {% if detox_exceeded %}
+  <div class="detox-alert">
+    <span style="font-size:1.6rem;">🚨</span>
+    <div>
+      <strong>Detox Limit Exceeded!</strong>
+      <p style="color:var(--text-muted);font-size:.85rem;margin-top:2px;">
+        You've exceeded your {{ limit }}-hour daily limit. Time for a break!
+      </p>
+    </div>
+  </div>
+  {% elif limit > 0 %}
+  <div class="detox-ok">
+    <span style="font-size:1.6rem;">✅</span>
+    <div>
+      <strong>Within Detox Limit</strong>
+      <p style="color:var(--text-muted);font-size:.85rem;margin-top:2px;">
+        You're within your {{ limit }}-hour daily limit. Keep it up!
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Stat cards -->
+  <div class="card-grid-4">
+    <div class="card card-accent-purple">
+      <div class="stat-label">Today's Screen Time</div>
+      <div class="stat-value" data-countup="{{ total }}">{{ total }}</div>
+      <div class="stat-sub">minutes ({{ "%.1f"|format(total/60) }} hrs)</div>
+    </div>
+    <div class="card card-accent-yellow">
+      <div class="stat-label">Addiction Level</div>
+      <div class="stat-value" style="font-size:1.6rem;color:{{ color }};">
+        {{ icon }} {{ level }}
+      </div>
+      <div class="stat-sub">Based on total usage today</div>
+    </div>
+    <div class="card card-accent-green">
+      <div class="stat-label">Digital Health Score</div>
+      <div class="score-ring">
+        <span data-countup="{{ score }}">{{ score }}</span>
+      </div>
+      <div class="stat-sub" style="text-align:center;">out of 100</div>
+    </div>
+    <div class="card card-accent-blue">
+      <div class="stat-label">Detox Limit</div>
+      <div class="stat-value" style="font-size:1.8rem;">
+        {% if limit > 0 %}{{ limit }} hrs{% else %}Not set{% endif %}
+      </div>
+      <div class="stat-sub">
+        <a href="{{ url_for('detox') }}" style="color:var(--accent3);">
+          {% if limit > 0 %}Update limit →{% else %}Set a limit →{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- App breakdown + quick actions -->
+  <div class="card-grid-2">
+    <div class="card">
+      <div class="stat-label" style="margin-bottom:20px;">App Breakdown</div>
+      {% set mx = [instagram, youtube, whatsapp, other, 1]|max %}
+      {% for label, val, grad in [
+          ('📸 Instagram', instagram, 'linear-gradient(90deg,#c471ed,#f64f59)'),
+          ('▶️ YouTube',   youtube,   'linear-gradient(90deg,#ff512f,#dd2476)'),
+          ('💬 WhatsApp',  whatsapp,  'linear-gradient(90deg,#11998e,#38ef7d)'),
+          ('📱 Other',     other,     'linear-gradient(90deg,#7c5cfc,#12c2e9)')] %}
+      <div class="usage-bar-wrap">
+        <div class="usage-bar-label">
+          <span>{{ label }}</span><span>{{ val }} min</span>
+        </div>
+        <div class="usage-bar-bg">
+          <div class="usage-bar-fill" style="background:{{ grad }};"
+               data-width="{{ (val/mx*100)|int }}"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;justify-content:center;">
+      <div class="stat-label" style="margin-bottom:4px;">Quick Actions</div>
+      <a href="{{ url_for('usage') }}"     class="btn btn-primary btn-full">📝 Log Today's Usage</a>
+      <a href="{{ url_for('analytics') }}" class="btn btn-outline btn-full">📊 Weekly Analytics</a>
+      <a href="{{ url_for('detox') }}"     class="btn btn-outline btn-full">🌿 Detox Mode</a>
+      <a href="{{ url_for('chatbot') }}"   class="btn btn-outline btn-full">🤖 Chat Assistant</a>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Screenova Project | All Rights Reserved</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="{{ url_for('static',filename='script.js') }}"></script>
+<script>
+function showToast(msg, ok=true){
+  const t = document.getElementById('toast');
+  t.textContent = (ok ? '✅ ' : '❌ ') + msg;
+  t.style.borderColor = ok ? 'var(--green)' : 'var(--red)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+async function enablePush(){
+  if(!('serviceWorker' in navigator) || !('Notification' in window)){
+    showToast('Push notifications not supported in this browser.', false); return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm !== 'granted'){ showToast('Permission denied.', false); return; }
+  const reg = await navigator.serviceWorker.register('/sw.js');
+  showToast('Push notifications enabled!');
+  document.getElementById('pushBtn').textContent = '✅ Push Enabled';
+  document.getElementById('pushBtn').disabled = true;
+  startPolling(reg);
+}
+
+function startPolling(reg){
+  setInterval(async () => {
+    try {
+      const r = await fetch('/push_status');
+      const d = await r.json();
+      if(d.level === 'High' || d.level === 'Severe'){
+        reg.showNotification('⚠️ Screenova Alert', {
+          body: `Addiction level is ${d.level} (${d.total} min today). Take a break!`,
+          tag: 'screenova-level', renotify: true
+        });
+      }
+      if(d.detox_exceeded){
+        reg.showNotification('🚨 Detox Limit Exceeded!', {
+          body: `You passed your ${d.detox_limit}hr daily limit.`,
+          tag: 'screenova-detox', renotify: false
+        });
+      }
+    } catch(e){}
+  }, 5 * 60 * 1000);
+}
+
+// Re-enable push button if already granted
+if('serviceWorker' in navigator && Notification.permission === 'granted'){
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    document.getElementById('pushBtn').textContent = '✅ Push Enabled';
+    document.getElementById('pushBtn').disabled = true;
+    startPolling(reg);
+  });
+}
+</script>
+</body>
+</html>
